@@ -27,19 +27,19 @@ export class Board {
     return result;
   }
 
-  private getCell(row: number, col: number) {
+  getCell(row: number, col: number) {
     return this.cells[row * 9 + col];
   }
 
-  private getRowCells(row: number) {
+  getRowCells(row: number) {
     return this.cells.filter((cell) => cell.getRow() === row);
   }
 
-  private getColCells(col: number) {
+  getColCells(col: number) {
     return this.cells.filter((cell) => col === cell.getCol());
   }
 
-  private getBoxCells(row: number, col: number) {
+  getBoxCells(row: number, col: number) {
     const target = this.getCell(row, col);
     return this.cells.filter((cell) => cell.isInSameBox(target));
   }

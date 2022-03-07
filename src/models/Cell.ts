@@ -18,6 +18,10 @@ export class Cell {
     return this.value === 0 ? "." : "" + this.value;
   }
 
+  getVal() {
+    return this.value;
+  }
+
   getRow() {
     return this.position[0];
   }
@@ -36,7 +40,7 @@ export class Cell {
     return row1 === row2 && col1 === col2;
   }
 
-  isWritable() {
+  isWritable(this: Cell): this is WritableCell {
     return this instanceof WritableCell;
   }
 }
@@ -51,7 +55,7 @@ export class WritableCell extends Cell {
 
   toString(pencilMarks = false): string {
     if (pencilMarks) {
-      return (" ".repeat(7) + this.getCandidates().join("")).slice(-7);
+      return (this.getCandidates().join("") + " ".repeat(7)).slice(0, 7);
     }
     return super.toString();
   }
@@ -60,11 +64,15 @@ export class WritableCell extends Cell {
     this.candidates.add(value);
   }
 
+  removeCandidate(value: X) {
+    this.candidates.delete(value);
+  }
+
   getCandidates() {
     return Array.from(this.candidates).sort();
   }
 
-  removeCandidate(value: X) {
-    this.candidates.delete(value);
+  setCandidates(values: X[]) {
+    values.forEach((val) => this.addCandidate(val));
   }
 }
