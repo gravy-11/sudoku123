@@ -1,4 +1,4 @@
-import { Cell, X } from "./Cell";
+import { Cell, WritableCell, X } from "./Cell";
 
 export class Board {
   constructor(private cells: Cell[]) {}
@@ -27,8 +27,22 @@ export class Board {
     return result;
   }
 
-  getCell(row: number, col: number) {
+  getCellAt(row: number, col: number) {
     return this.cells[row * 9 + col];
+  }
+
+  setCellAt(row: number, col: number, value: X) {
+    const target = this.cells[row * 9 + col];
+    if (!target.isWritable()) {
+      return;
+    }
+    target.setVal(value);
+  }
+
+  getUnresolvedCells() {
+    return this.cells.filter(
+      (cell): cell is WritableCell => cell.getVal() === 0
+    );
   }
 
   getRowCells(row: number) {
@@ -40,7 +54,7 @@ export class Board {
   }
 
   getBoxCells(row: number, col: number) {
-    const target = this.getCell(row, col);
+    const target = this.getCellAt(row, col);
     return this.cells.filter((cell) => cell.isInSameBox(target));
   }
 
@@ -49,10 +63,10 @@ export class Board {
     for (let col = 0; col < 9; col++) {
       if (pencilMarks) {
         const preposition = col % 3 === 0 ? "| " : " ";
-        result += preposition + this.getCell(row, col).toString(pencilMarks);
+        result += preposition + this.getCellAt(row, col).toString(pencilMarks);
       } else {
         const preposition = col % 3 === 0 ? "|" : " ";
-        result += preposition + this.getCell(row, col).toString();
+        result += preposition + this.getCellAt(row, col).toString();
       }
     }
     result += "|\n";

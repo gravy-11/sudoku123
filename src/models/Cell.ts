@@ -13,7 +13,7 @@ export class Cell {
 
   toString(pencilMarks = false) {
     if (pencilMarks) {
-      return this.value + " ".repeat(6);
+      return this.value + "_" + " ".repeat(5);
     }
     return this.value === 0 ? "." : "" + this.value;
   }
@@ -46,7 +46,7 @@ export class Cell {
 }
 
 export class WritableCell extends Cell {
-  candidates: Set<X>;
+  private candidates: Set<X>;
 
   constructor(position: Position, value: X) {
     super(position, value);
@@ -58,6 +58,10 @@ export class WritableCell extends Cell {
       return (this.getCandidates().join("") + " ".repeat(7)).slice(0, 7);
     }
     return super.toString();
+  }
+
+  setVal(value: X) {
+    this.value = value;
   }
 
   addCandidate(value: X) {
