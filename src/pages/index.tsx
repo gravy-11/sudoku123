@@ -3,6 +3,8 @@ import Head from "next/head";
 import { css } from "@emotion/react";
 import { createBoard } from "../domains/models/board";
 import { printBoard } from "../domains/helpers/printer";
+import { getBoardWithCandidates } from "../domains/helpers/solve";
+import { Backtrack } from "../domains/helpers/backtrack";
 
 const Home: NextPage = () => {
   const container = css`
@@ -12,7 +14,9 @@ const Home: NextPage = () => {
   const input =
     "310004069000000200008005040000000005006000017807030000590700006600003050000100002";
   const board = createBoard(input);
-  printBoard(board, true);
+  // const boardWCandidates = getBoardWithCandidates(board);
+  const answerBoard = new Backtrack().solve(board);
+  // printBoard(answerBoard);
   // board.setAllCandidates();
   // const answer = solve(input);
   // board.setAllCandidates();

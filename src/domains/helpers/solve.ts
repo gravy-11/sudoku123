@@ -1,3 +1,4 @@
+import produce from "immer";
 import {
   Board,
   getCellAt,
@@ -6,6 +7,7 @@ import {
   getBoxValues,
 } from "../models/board";
 import { Candidate } from "../models/cell";
+import { existsSameValue } from "./existsSameValue";
 // import { Backtrack } from "../models/Backtrack";
 
 // export function solve(input: string): string {
@@ -32,11 +34,38 @@ export const getCandidatesAt = (board: Board, row: number, col: number) => {
   return initCandidates.filter((c) => !existingValues.includes(c));
 };
 
-// export const getAllCandidates(board) {
-//   let result = []
-//   for (let row = 0; row < 9; row++) {
-//     for (let col = 0; col < 9; col++) {
-//       this.setCandidatesAt(col, row);
-//     }
-//   }
-// }
+export const getBoardWithCandidates = (board: Board): Board => {
+  return produce(board, (draft) => {
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        const target = getCellAt(draft, row, col);
+        if (!target.writable) {
+          continue;
+        }
+        const candidates = getCandidatesAt(board, row, col);
+        if (candidates == null) {
+          continue;
+        }
+        target.candidates = candidates;
+      }
+    }
+  });
+};
+
+export const checkAt = (board: Board, row: number, col: number) => {
+  const rowValues = getRowValues(board, row);
+  if (existsSameValue(rowValues)) {
+    return false;
+  }
+
+  const colValues = getColValues(board, col);
+  if (existsSameValue(colValues)) {
+    return false;
+  }
+
+  const boxValues = getBoxValues(board, row, col);
+  if (existsSameValue(boxValues)) {
+    return false;
+  }
+  return true;
+};
