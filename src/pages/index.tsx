@@ -1,11 +1,23 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { css } from "@emotion/react";
+import { createBoard } from "../domains/models/board";
+import { printBoard } from "../domains/helpers/printer";
 
 const Home: NextPage = () => {
   const container = css`
     background-color: red;
   `;
+
+  const input =
+    "310004069000000200008005040000000005006000017807030000590700006600003050000100002";
+  const board = createBoard(input);
+  printBoard(board, true);
+  // board.setAllCandidates();
+  // const answer = solve(input);
+  // board.setAllCandidates();
+  // console.log(board.toString(true));
+  // console.log(answer);
 
   return (
     <div>
