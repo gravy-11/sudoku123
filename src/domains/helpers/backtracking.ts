@@ -2,7 +2,7 @@ import produce from "immer";
 import { Board, getUnresolvedCells, getCellAt } from "../models/board";
 import { getCandidatesAt, getCellCandidates } from "./solve";
 
-export class Backtrack {
+export class Backtracking {
   logs: { board: Board; candidateIdx: number }[];
 
   constructor() {
