@@ -1,12 +1,14 @@
 import produce from "immer";
+import { difference } from "lodash-es";
 import {
   Board,
   getCellAt,
   getRowValues,
   getColValues,
   getBoxValues,
+  getUnresolvedCells,
 } from "../models/board";
-import { Candidate, Cell } from "../models/cell";
+import { Candidate, Cell, Position, WritableCell } from "../models/cell";
 import { existsSameValue } from "./existsSameValue";
 
 const getExistingValues = (board: Board, row: number, col: number) => {
@@ -48,6 +50,35 @@ export const getBoardWithCandidates = (board: Board): Board => {
       }
     }
   });
+};
+
+type CandidateCheck = {
+  missing: { position: Position; value: Candidate }[];
+  redundant: { position: Position; value: Candidate }[];
+};
+
+export const checkFullCandidates = (board: Board): CandidateCheck => {
+  const result = {
+    missing: [],
+    redundant: [],
+  } as CandidateCheck;
+  const fullCandidatesBoard = getBoardWithCandidates(board);
+  const unresolvedCells = getUnresolvedCells(board);
+  unresolvedCells.forEach((cell) => {
+    const { row, col } = cell.position;
+    const answerCell = getCellAt(fullCandidatesBoard, row, col) as WritableCell;
+    const userCandidates = cell.candidates;
+    const answerCandidates = answerCell.candidates;
+    const missingCandidates = difference(answerCandidates, userCandidates);
+    missingCandidates.forEach((value) => {
+      result.missing.push({ position: cell.position, value });
+    });
+    const redundantCandidates = difference(userCandidates, answerCandidates);
+    redundantCandidates.forEach((value) => {
+      result.redundant.push({ position: cell.position, value });
+    });
+  });
+  return result;
 };
 
 export const checkAt = (board: Board, row: number, col: number) => {
