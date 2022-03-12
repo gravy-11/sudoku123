@@ -18,20 +18,10 @@ export class Backtracking {
 
   forward(board: Board, candidateIdx: number): Board {
     this.logs.push({ board, candidateIdx });
-    const unresolvedCells = getUnresolvedCells(board);
-    if (unresolvedCells.length === 0) {
+    const sortedUnresolvedCells = this.getSortedUnresolvedCells(board);
+    if (sortedUnresolvedCells.length === 0) {
       return board;
     }
-    const sortedUnresolvedCells = produce(unresolvedCells, (draft) => {
-      draft.sort((c1, c2) => {
-        const c1Candidates = getCellCandidates(board, c1);
-        const c2Candidates = getCellCandidates(board, c2);
-        if (c1Candidates == null || c2Candidates == null) {
-          return 0;
-        }
-        return c1Candidates.length - c2Candidates.length;
-      });
-    });
 
     const firstUnresolvedCell = sortedUnresolvedCells[0];
     const { row, col } = firstUnresolvedCell.position;
@@ -51,8 +41,18 @@ export class Backtracking {
   backward(): Board {
     const { board, candidateIdx } = this.logs.pop()!;
     const nextCandidateIdx = candidateIdx + 1;
+    const firstUnresolvedCell = this.getSortedUnresolvedCells(board)[0];
+    const { row, col } = firstUnresolvedCell.position;
+    const candidates = getCandidatesAt(board, row, col)!;
+    if (nextCandidateIdx < candidates.length) {
+      return this.forward(board, nextCandidateIdx);
+    }
+    return this.backward();
+  }
+
+  getSortedUnresolvedCells(board: Board) {
     const unresolvedCells = getUnresolvedCells(board);
-    const sortedUnresolvedCells = produce(unresolvedCells, (draft) => {
+    return produce(unresolvedCells, (draft) => {
       draft.sort((c1, c2) => {
         const c1Candidates = getCellCandidates(board, c1);
         const c2Candidates = getCellCandidates(board, c2);
@@ -62,12 +62,5 @@ export class Backtracking {
         return c1Candidates.length - c2Candidates.length;
       });
     });
-    const firstUnresolvedCell = sortedUnresolvedCells[0];
-    const { row, col } = firstUnresolvedCell.position;
-    const candidates = getCandidatesAt(board, row, col)!;
-    if (nextCandidateIdx < candidates.length) {
-      return this.forward(board, nextCandidateIdx);
-    }
-    return this.backward();
   }
 }
