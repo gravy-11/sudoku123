@@ -1,8 +1,6 @@
 import produce from "immer";
 import { Board, getUnresolvedCells, getCellAt } from "../models/board";
-import { Candidate } from "../models/cell";
-import { checkAt, getCandidatesAt } from "./solve";
-import { printBoard } from "./printer";
+import { getCandidatesAt, getCellCandidates } from "./solve";
 
 export class Backtrack {
   static count = 0;
@@ -23,8 +21,18 @@ export class Backtrack {
     if (unresolvedCells.length === 0) {
       return board;
     }
+    const sortedUnresolvedCells = produce(unresolvedCells, (draft) => {
+      draft.sort((c1, c2) => {
+        const c1Candidates = getCellCandidates(board, c1);
+        const c2Candidates = getCellCandidates(board, c2);
+        if (c1Candidates == null || c2Candidates == null) {
+          return 0;
+        }
+        return c1Candidates.length - c2Candidates.length;
+      });
+    });
 
-    const firstUnresolvedCell = unresolvedCells[0];
+    const firstUnresolvedCell = sortedUnresolvedCells[0];
     const { row, col } = firstUnresolvedCell.position;
     const candidates = getCandidatesAt(board, row, col)!;
     if (candidates.length === 0) {
@@ -35,11 +43,6 @@ export class Backtrack {
       const cell = getCellAt(draft, row, col);
       cell.value = candidates[candidateIdx];
     });
-    // console.log(Backtrack.count, candidateIdx);
-    // printBoard(nextBoard);
-    // if (Backtrack.count > 3400) {
-    //   return board;
-    // }
 
     return this.forward(nextBoard, 0);
   }
@@ -48,7 +51,17 @@ export class Backtrack {
     const { board, candidateIdx } = this.logs.pop()!;
     const nextCandidateIdx = candidateIdx + 1;
     const unresolvedCells = getUnresolvedCells(board);
-    const firstUnresolvedCell = unresolvedCells[0];
+    const sortedUnresolvedCells = produce(unresolvedCells, (draft) => {
+      draft.sort((c1, c2) => {
+        const c1Candidates = getCellCandidates(board, c1);
+        const c2Candidates = getCellCandidates(board, c2);
+        if (c1Candidates == null || c2Candidates == null) {
+          return 0;
+        }
+        return c1Candidates.length - c2Candidates.length;
+      });
+    });
+    const firstUnresolvedCell = sortedUnresolvedCells[0];
     const { row, col } = firstUnresolvedCell.position;
     const candidates = getCandidatesAt(board, row, col)!;
     if (nextCandidateIdx < candidates.length) {

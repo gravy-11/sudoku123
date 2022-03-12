@@ -1,5 +1,4 @@
-import { createCell, Cell, Candidate, isInSameBox } from "./cell";
-// import { existsSameValue } from "../helpers/existsSameValue";
+import { createCell, Cell, WritableCell, Candidate, isInSameBox } from "./cell";
 
 export type Board = {
   cells: Cell[];
@@ -48,5 +47,7 @@ export const getBoxValues = (board: Board, row: number, col: number) => {
 };
 
 export const getUnresolvedCells = (board: Board) => {
-  return board.cells.filter((cell) => cell.writable && cell.value == null);
+  return board.cells.filter(
+    (cell): cell is WritableCell => cell.writable && cell.value == null
+  );
 };

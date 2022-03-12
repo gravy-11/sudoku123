@@ -14,14 +14,9 @@ const Home: NextPage = () => {
   const input =
     "310004069000000200008005040000000005006000017807030000590700006600003050000100002";
   const board = createBoard(input);
-  // const boardWCandidates = getBoardWithCandidates(board);
+  printBoard(board);
   const answerBoard = new Backtrack().solve(board);
-  // printBoard(answerBoard);
-  // board.setAllCandidates();
-  // const answer = solve(input);
-  // board.setAllCandidates();
-  // console.log(board.toString(true));
-  // console.log(answer);
+  printBoard(answerBoard);
 
   return (
     <div>

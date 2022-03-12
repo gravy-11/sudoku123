@@ -6,21 +6,19 @@ import {
   getColValues,
   getBoxValues,
 } from "../models/board";
-import { Candidate } from "../models/cell";
+import { Candidate, Cell } from "../models/cell";
 import { existsSameValue } from "./existsSameValue";
-// import { Backtrack } from "../models/Backtrack";
-
-// export function solve(input: string): string {
-//   const board = Board.from(input);
-//   const solver = new Backtrack(board);
-//   return solver.solve();
-// }
 
 const getExistingValues = (board: Board, row: number, col: number) => {
   const rowValues = getRowValues(board, row);
   const colValues = getColValues(board, col);
   const boxValues = getBoxValues(board, row, col);
   return [...rowValues, ...colValues, ...boxValues];
+};
+
+export const getCellCandidates = (board: Board, cell: Cell) => {
+  const { row, col } = cell.position;
+  return getCandidatesAt(board, row, col);
 };
 
 export const getCandidatesAt = (board: Board, row: number, col: number) => {
