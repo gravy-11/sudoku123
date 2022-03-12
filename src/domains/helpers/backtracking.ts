@@ -1,5 +1,5 @@
 import produce from "immer";
-import { Board, getUnresolvedCells, getCellAt } from "../models/board";
+import { Board, getUnsolvedCells, getCellAt } from "../models/board";
 import { getCandidatesAt, getCellCandidates } from "./solve";
 
 export class Backtracking {
@@ -18,13 +18,13 @@ export class Backtracking {
 
   forward(board: Board, candidateIdx: number): Board {
     this.logs.push({ board, candidateIdx });
-    const sortedUnresolvedCells = this.getSortedUnresolvedCells(board);
-    if (sortedUnresolvedCells.length === 0) {
+    const sortedUnsolvedCells = this.getSortedUnsolvedCells(board);
+    if (sortedUnsolvedCells.length === 0) {
       return board;
     }
 
-    const firstUnresolvedCell = sortedUnresolvedCells[0];
-    const { row, col } = firstUnresolvedCell.position;
+    const firstUnsolvedCell = sortedUnsolvedCells[0];
+    const { row, col } = firstUnsolvedCell.position;
     const candidates = getCandidatesAt(board, row, col)!;
     if (candidates.length === 0) {
       return this.backward();
@@ -41,8 +41,8 @@ export class Backtracking {
   backward(): Board {
     const { board, candidateIdx } = this.logs.pop()!;
     const nextCandidateIdx = candidateIdx + 1;
-    const firstUnresolvedCell = this.getSortedUnresolvedCells(board)[0];
-    const { row, col } = firstUnresolvedCell.position;
+    const firstUnsolvedCell = this.getSortedUnsolvedCells(board)[0];
+    const { row, col } = firstUnsolvedCell.position;
     const candidates = getCandidatesAt(board, row, col)!;
     if (nextCandidateIdx < candidates.length) {
       return this.forward(board, nextCandidateIdx);
@@ -50,9 +50,9 @@ export class Backtracking {
     return this.backward();
   }
 
-  getSortedUnresolvedCells(board: Board) {
-    const unresolvedCells = getUnresolvedCells(board);
-    return produce(unresolvedCells, (draft) => {
+  getSortedUnsolvedCells(board: Board) {
+    const unsolvedCells = getUnsolvedCells(board);
+    return produce(unsolvedCells, (draft) => {
       draft.sort((c1, c2) => {
         const c1Candidates = getCellCandidates(board, c1);
         const c2Candidates = getCellCandidates(board, c2);

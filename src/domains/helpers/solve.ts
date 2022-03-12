@@ -6,9 +6,9 @@ import {
   getRowValues,
   getColValues,
   getBoxValues,
-  getUnresolvedCells,
+  getUnsolvedCells,
 } from "../models/board";
-import { Candidate, Cell, Position, WritableCell } from "../models/cell";
+import { Digit, Cell, Position, WritableCell } from "../models/cell";
 import { existsSameValue } from "./existsSameValue";
 
 const getExistingValues = (board: Board, row: number, col: number) => {
@@ -30,7 +30,7 @@ export const getCandidatesAt = (board: Board, row: number, col: number) => {
   }
 
   const existingValues = getExistingValues(board, row, col);
-  const initCandidates = [1, 2, 3, 4, 5, 6, 7, 8, 9] as Candidate[];
+  const initCandidates = [1, 2, 3, 4, 5, 6, 7, 8, 9] as Digit[];
   return initCandidates.filter((c) => !existingValues.includes(c));
 };
 
@@ -53,8 +53,8 @@ export const getBoardWithCandidates = (board: Board): Board => {
 };
 
 type CandidateCheck = {
-  missing: { position: Position; value: Candidate }[];
-  redundant: { position: Position; value: Candidate }[];
+  missing: { position: Position; value: Digit }[];
+  redundant: { position: Position; value: Digit }[];
 };
 
 export const checkFullCandidates = (board: Board): CandidateCheck => {
@@ -63,8 +63,8 @@ export const checkFullCandidates = (board: Board): CandidateCheck => {
     redundant: [],
   } as CandidateCheck;
   const fullCandidatesBoard = getBoardWithCandidates(board);
-  const unresolvedCells = getUnresolvedCells(board);
-  unresolvedCells.forEach((cell) => {
+  const unsolvedCells = getUnsolvedCells(board);
+  unsolvedCells.forEach((cell) => {
     const { row, col } = cell.position;
     const answerCell = getCellAt(fullCandidatesBoard, row, col) as WritableCell;
     const userCandidates = cell.candidates;

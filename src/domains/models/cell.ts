@@ -1,4 +1,4 @@
-export type Candidate = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type Position = {
   row: number;
@@ -9,24 +9,24 @@ type BaseCell = {
   position: Readonly<Position>;
 };
 
-export type DefaultCell = BaseCell & {
+export type GivenCell = BaseCell & {
   writable: false;
-  value: Candidate;
+  value: Digit;
 };
 
 export type WritableCell = BaseCell & {
   writable: true;
-  value?: Candidate;
-  candidates: Candidate[];
+  value?: Digit;
+  candidates: Digit[];
 };
 
-export type Cell = DefaultCell | WritableCell;
+export type Cell = GivenCell | WritableCell;
 
-export const createCell = (position: Position, value: Candidate | 0) => {
+export const createCell = (position: Position, value: Digit | 0) => {
   if (value === 0) {
     return { writable: true, position, candidates: [] } as WritableCell;
   }
-  return { writable: false, position, value } as DefaultCell;
+  return { writable: false, position, value } as GivenCell;
 };
 
 export const isInSameBox = (cell: Cell, another: Cell) => {
