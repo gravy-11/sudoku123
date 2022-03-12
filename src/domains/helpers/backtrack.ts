@@ -3,7 +3,6 @@ import { Board, getUnresolvedCells, getCellAt } from "../models/board";
 import { getCandidatesAt, getCellCandidates } from "./solve";
 
 export class Backtrack {
-  static count = 0;
   logs: { board: Board; candidateIdx: number }[];
 
   constructor() {
@@ -11,11 +10,13 @@ export class Backtrack {
   }
 
   solve(board: Board): Board {
-    return this.forward(board, 0);
+    console.time("backtracking");
+    const answer = this.forward(board, 0);
+    console.timeEnd("backtracking");
+    return answer;
   }
 
   forward(board: Board, candidateIdx: number): Board {
-    Backtrack.count++;
     this.logs.push({ board, candidateIdx });
     const unresolvedCells = getUnresolvedCells(board);
     if (unresolvedCells.length === 0) {
