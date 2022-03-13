@@ -1,5 +1,5 @@
 import produce from "immer";
-import { Board, getUnsolvedCells, getCellAt } from "../models/board";
+import { Board, getUnsolvedCells, setCellAt } from "../models/board";
 import { getCandidatesAt, getCellCandidates } from "./solve";
 
 export class Backtracking {
@@ -31,8 +31,7 @@ export class Backtracking {
     }
 
     const nextBoard = produce(board, (draft) => {
-      const cell = getCellAt(draft, row, col);
-      cell.value = candidates[candidateIdx];
+      setCellAt(draft, row, col, candidates[candidateIdx]);
     });
 
     return this.forward(nextBoard, 0);

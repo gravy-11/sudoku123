@@ -24,10 +24,10 @@ const getBottomBorder = (pencilMarks = false) => {
 
 const getCellString = (cell: Cell, pencilMarks = false) => {
   if (!pencilMarks) {
-    return cell.value == null ? "." : "" + cell.value;
+    return cell.type === "unsolved" ? "." : "" + cell.value;
   }
 
-  if (cell.writable) {
+  if (cell.type === "unsolved") {
     return (cell.candidates.join("") + " ".repeat(7)).slice(0, 7);
   }
   return cell.value + "_" + " ".repeat(5);

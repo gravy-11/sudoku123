@@ -1,7 +1,14 @@
-import { createCell, Cell, WritableCell, Digit, isInSameBox } from "./cell";
+import {
+  createCell,
+  Cell,
+  UnsolvedCell,
+  Digit,
+  isInSameBox,
+  FilledCell,
+} from "./cell";
 
 export type Board = {
-  cells: Cell[];
+  readonly cells: Cell[];
 };
 
 export const createBoard = (input: string): Board => {
@@ -20,34 +27,56 @@ export const createBoard = (input: string): Board => {
 };
 
 export const outputBoard = (board: Board): string => {
-  return board.cells.map((c) => (c.value == null ? 0 : c.value)).join("");
+  return board.cells.map((c) => (c.type === "unsolved" ? 0 : c.value)).join("");
 };
 
 export const getCellAt = (board: Board, row: number, col: number) => {
   return board.cells[row * 9 + col];
 };
 
+export const setCellAt = (
+  board: Board,
+  row: number,
+  col: number,
+  value: Digit
+) => {
+  board.cells[row * 9 + col] = {
+    type: "solved",
+    position: { row, col },
+    value,
+  };
+};
+
+const cellIsFilled = (cell: Cell): cell is FilledCell => {
+  return cell.type !== "unsolved";
+};
+
 export const getRowValues = (board: Board, row: number) => {
   return board.cells
-    .filter((cell) => cell.position.row === row && cell.value != null)
-    .map((cell) => cell.value as Digit);
+    .filter((cell) => cell.position.row === row)
+    .filter(cellIsFilled)
+    .map((cell) => cell.value);
 };
 
 export const getColValues = (board: Board, col: number) => {
   return board.cells
-    .filter((cell) => cell.position.col === col && cell.value != null)
-    .map((cell) => cell.value as Digit);
+    .filter((cell) => cell.position.col === col)
+    .filter(cellIsFilled)
+    .map((cell) => cell.value);
 };
 
 export const getBoxValues = (board: Board, row: number, col: number) => {
   const target = getCellAt(board, row, col);
   return board.cells
-    .filter((cell) => isInSameBox(cell, target) && cell.value != null)
-    .map((cell) => cell.value as Digit);
+    .filter((cell) => isInSameBox(cell, target))
+    .filter(cellIsFilled)
+    .map((cell) => cell.value);
+};
+
+const cellIsUnsolved = (cell: Cell): cell is UnsolvedCell => {
+  return cell.type === "unsolved";
 };
 
 export const getUnsolvedCells = (board: Board) => {
-  return board.cells.filter(
-    (cell): cell is WritableCell => cell.writable && cell.value == null
-  );
+  return board.cells.filter(cellIsUnsolved);
 };

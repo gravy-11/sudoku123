@@ -8,7 +8,7 @@ import {
   getBoxValues,
   getUnsolvedCells,
 } from "../models/board";
-import { Digit, Cell, Position, WritableCell } from "../models/cell";
+import { Digit, Cell, Position, UnsolvedCell } from "../models/cell";
 import { existsSameValue } from "./existsSameValue";
 
 const getExistingValues = (board: Board, row: number, col: number) => {
@@ -25,7 +25,7 @@ export const getCellCandidates = (board: Board, cell: Cell) => {
 
 export const getCandidatesAt = (board: Board, row: number, col: number) => {
   const target = getCellAt(board, row, col);
-  if (!target.writable || target.value != null) {
+  if (target.type !== "unsolved") {
     return;
   }
 
@@ -38,8 +38,8 @@ export const getBoardWithCandidates = (board: Board): Board => {
   return produce(board, (draft) => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
-        const target = getCellAt(draft, row, col);
-        if (!target.writable) {
+        const target = draft.cells[row * 9 + col];
+        if (target.type !== "unsolved") {
           continue;
         }
         const candidates = getCandidatesAt(board, row, col);
@@ -66,7 +66,7 @@ export const checkFullCandidates = (board: Board): CandidateCheck => {
   const unsolvedCells = getUnsolvedCells(board);
   unsolvedCells.forEach((cell) => {
     const { row, col } = cell.position;
-    const answerCell = getCellAt(fullCandidatesBoard, row, col) as WritableCell;
+    const answerCell = getCellAt(fullCandidatesBoard, row, col) as UnsolvedCell;
     const userCandidates = cell.candidates;
     const answerCandidates = answerCell.candidates;
     const missingCandidates = difference(answerCandidates, userCandidates);

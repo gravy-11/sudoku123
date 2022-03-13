@@ -9,24 +9,35 @@ type BaseCell = {
   position: Readonly<Position>;
 };
 
-export type GivenCell = BaseCell & {
-  writable: false;
-  value: Digit;
-};
+export type GivenCell = BaseCell &
+  Readonly<{
+    type: "given";
+    value: Digit;
+  }>;
 
-export type WritableCell = BaseCell & {
-  writable: true;
-  value?: Digit;
-  candidates: Digit[];
-};
+export type UnsolvedCell = BaseCell &
+  Readonly<{
+    type: "unsolved";
+    candidates: Digit[];
+  }>;
 
-export type Cell = GivenCell | WritableCell;
+export type SolvedCell = BaseCell &
+  Readonly<{
+    type: "solved";
+    value: Digit;
+  }>;
 
-export const createCell = (position: Position, value: Digit | 0) => {
+export type FilledCell = GivenCell | SolvedCell;
+export type Cell = FilledCell | UnsolvedCell;
+
+export const createCell = (
+  position: Position,
+  value: Digit | 0
+): UnsolvedCell | GivenCell => {
   if (value === 0) {
-    return { writable: true, position, candidates: [] } as WritableCell;
+    return { type: "unsolved", position, candidates: [] };
   }
-  return { writable: false, position, value } as GivenCell;
+  return { type: "given", position, value };
 };
 
 export const isInSameBox = (cell: Cell, another: Cell) => {
