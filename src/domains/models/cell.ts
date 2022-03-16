@@ -1,9 +1,6 @@
-export type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+import { Position } from "./position";
 
-export type Position = {
-  row: number;
-  col: number;
-};
+export type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type BaseCell = {
   position: Readonly<Position>;
