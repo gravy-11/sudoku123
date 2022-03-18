@@ -1,4 +1,4 @@
-import { Position } from "./position";
+import { inSameBox, Position } from "./position";
 
 export type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -38,7 +38,5 @@ export const createCell = (
 };
 
 export const isInSameBox = (cell: Cell, another: Cell) => {
-  const { row: row1, col: col1 } = cell.position;
-  const { row: row2, col: col2 } = another.position;
-  return row1 === row2 && col1 === col2;
+  return inSameBox(cell.position, another.position);
 };

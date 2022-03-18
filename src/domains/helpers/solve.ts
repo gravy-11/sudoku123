@@ -8,7 +8,8 @@ import {
   getBoxValues,
   getUnsolvedCells,
 } from "../models/board";
-import { Digit, Cell, Position, UnsolvedCell } from "../models/cell";
+import { Digit, Cell, UnsolvedCell } from "../models/cell";
+import { Position } from "../models/position";
 import { existsSameValue } from "./existsSameValue";
 
 const getExistingValues = (board: Board, row: number, col: number) => {

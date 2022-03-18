@@ -9,7 +9,7 @@ export const inSameRow = (p1: Position, p2: Position) => p1.row === p2.row;
 
 export const inSameCol = (p1: Position, p2: Position) => p1.col === p2.col;
 
-export const isSame = (p1: Position, p2: Position) => {
+export const inSameCell = (p1: Position, p2: Position) => {
   return inSameRow(p1, p2) && inSameCol(p1, p2);
 };
 
@@ -47,3 +47,17 @@ export const boxSingleDigit = (positions: Position[]) => {
   const table = countBy(boxes);
   return positions.filter((p) => table[box(p)] === 1);
 };
+
+const Position = {
+  inSameRow,
+  inSameCol,
+  inSameCell,
+  inSameFloor,
+  inSameTower,
+  inSameBox,
+  rowSingleDigit,
+  colSingleDigit,
+  boxSingleDigit,
+};
+
+export default Position;
