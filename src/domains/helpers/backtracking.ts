@@ -1,9 +1,14 @@
 import produce from "immer";
 import { Board, getUnsolvedCells, setCellAt } from "../models/board";
+import { Digit, UnsolvedCell } from "../models/cell";
 import { getCandidatesAt, getCellCandidates } from "./solve";
 
 export class Backtracking {
-  logs: { board: Board; candidateIdx: number }[];
+  logs: {
+    board: Board;
+    candidateIdx: number;
+    candidates: Digit[];
+  }[];
 
   constructor() {
     this.logs = [];
@@ -17,7 +22,6 @@ export class Backtracking {
   }
 
   forward(board: Board, candidateIdx: number): Board {
-    this.logs.push({ board, candidateIdx });
     const sortedUnsolvedCells = this.getSortedUnsolvedCells(board);
     if (sortedUnsolvedCells.length === 0) {
       return board;
@@ -26,6 +30,7 @@ export class Backtracking {
     const firstUnsolvedCell = sortedUnsolvedCells[0];
     const { row, col } = firstUnsolvedCell.position;
     const candidates = getCandidatesAt(board, row, col)!;
+    this.logs.push({ board, candidateIdx, candidates });
     if (candidates.length === 0) {
       return this.backward();
     }
@@ -38,11 +43,8 @@ export class Backtracking {
   }
 
   backward(): Board {
-    const { board, candidateIdx } = this.logs.pop()!;
+    const { board, candidateIdx, candidates } = this.logs.pop()!;
     const nextCandidateIdx = candidateIdx + 1;
-    const firstUnsolvedCell = this.getSortedUnsolvedCells(board)[0];
-    const { row, col } = firstUnsolvedCell.position;
-    const candidates = getCandidatesAt(board, row, col)!;
     if (nextCandidateIdx < candidates.length) {
       return this.forward(board, nextCandidateIdx);
     }
