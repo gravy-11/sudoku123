@@ -11,47 +11,47 @@ type Log = {
 
 export class Backtracking {
   private logs: Log[];
-  private answers: Board[];
 
   constructor() {
     this.logs = [];
-    this.answers = [];
   }
 
-  solve(board: Board, uniqueCheck?: false): Board;
-  solve(board: Board, uniqueCheck: true): Board[];
-  solve(board: Board, uniqueCheck = false): Board | Board[] {
+  solve(board: Board): Board {
     console.time("backtracking");
+    const answer = this.forward(board, 0);
+    if (answer == null) {
+      throw new Error("This problem has no solutions.");
+    }
+
+    console.timeEnd("backtracking");
+    return answer;
+  }
+
+  hasUniqueSolution(board: Board) {
+    console.time("backtracking");
+    const answers: Board[] = [];
     let nextBoard = board;
     let nextCandidateIdx = 0;
 
     while (true) {
       const answer =
-        this.answers.length === 0
+        answers.length === 0
           ? this.forward(nextBoard, nextCandidateIdx)
           : this.backward();
       if (answer == null) break;
-      this.answers.push(answer);
+      answers.push(answer);
 
-      if (!uniqueCheck) {
-        break;
-      }
+      if (answers.length > 1) break;
     }
 
     console.timeEnd("backtracking");
-    if (uniqueCheck) {
-      return this.answers;
-    }
-    return this.answers[0];
+    return answers.length === 1;
   }
 
   forward(board: Board, candidateIdx: number): Board | null {
     const sortedUnsolvedCells = this.getSortedUnsolvedCells(board);
 
     if (sortedUnsolvedCells.length === 0) {
-      // board フルで埋まってる
-      // candidateIdx 0
-      // logsの最後は1つだけ空いているboard candidateIdx = 0
       return board;
     }
 
@@ -84,7 +84,8 @@ export class Backtracking {
   }
 
   getSortedUnsolvedCells(board: Board) {
-    const unsolvedCells = getUnsolvedCells(board);
+    // 効率化のために、手前にあるものをいくつか取ってソートする
+    const unsolvedCells = getUnsolvedCells(board).slice(0, 27);
     return produce(unsolvedCells, (draft) => {
       draft.sort((c1, c2) => {
         const c1Candidates = getCellCandidates(board, c1);
