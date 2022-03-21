@@ -6,6 +6,7 @@ import {
   isInSameBox,
   FilledCell,
 } from "./cell";
+import { Position } from "./position";
 
 export type Board = {
   readonly cells: Cell[];
@@ -73,10 +74,22 @@ export const getBoxValues = (board: Board, row: number, col: number) => {
     .map((cell) => cell.value);
 };
 
+export const digitCount = (houseDigit: Digit[]) => {};
+
 const cellIsUnsolved = (cell: Cell): cell is UnsolvedCell => {
   return cell.type === "unsolved";
 };
 
 export const getUnsolvedCells = (board: Board) => {
   return board.cells.filter(cellIsUnsolved);
+};
+
+export const getCandidatePositions = (
+  board: Board,
+  digit: Digit
+): Position[] => {
+  const unsolvedCells = getUnsolvedCells(board);
+  return unsolvedCells
+    .filter((cell) => cell.candidates.includes(digit))
+    .map((cell) => cell.position);
 };
